@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/seesawlogo"
+            android:contentDescription="Seesaw Logo"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset Password"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#7B1FA2"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter your email address and we'll send you a link to reset your password."
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Email Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email Address"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etForgotEmail"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Enter your email"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:background="@drawable/log"
+            android:elevation="4dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Reset Password Button -->
+        <Button
+            android:id="@+id/btnResetPassword"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Reset Password"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#7B1FA2"
+            android:layout_marginBottom="24dp"
+            android:stateListAnimator="@null" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginVertical="16dp" />
+
+        <!-- Back to Login -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remember your password?"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnBackToLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="Back to Login"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textColor="#7B1FA2"
+            android:background="@android:color/transparent"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

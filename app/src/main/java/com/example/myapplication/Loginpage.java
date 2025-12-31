@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -115,11 +114,13 @@ public class Loginpage extends AppCompatActivity {
             }
         });
 
-        // Forgot Password text click
+        // Forgot Password text click - DIRECT OPEN NEW ACTIVITY
         tvForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showForgotPasswordDialog();
+                // Open ForgotPasswordActivity directly
+                Intent intent = new Intent(Loginpage.this, forgotpass.class);
+                startActivity(intent);
             }
         });
     }
@@ -149,38 +150,6 @@ public class Loginpage extends AppCompatActivity {
 
             Toast.makeText(this, userStatus + "\n" + timeStatus, Toast.LENGTH_LONG).show();
         }
-    }
-
-    // ==================== FORGOT PASSWORD ====================
-    private void showForgotPasswordDialog() {
-        String email = etEmail.getText().toString().trim();
-
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this, "Please enter your email first", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        sendPasswordResetEmail(email);
-    }
-
-    private void sendPasswordResetEmail(String email) {
-        Toast.makeText(this, "📧 Sending reset email to " + email, Toast.LENGTH_SHORT).show();
-
-        mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(Loginpage.this,
-                                    "✅ Password reset email sent!",
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(Loginpage.this,
-                                    "❌ Failed: " + task.getException().getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
     }
 
     // ==================== SESSION HANDLING ====================

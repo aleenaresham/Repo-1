@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".forgotpass"
+            android:exported="false" />
+        <activity
             android:name=".Qr"
             android:exported="false" />
         <activity
