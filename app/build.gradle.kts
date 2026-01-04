@@ -46,7 +46,5 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("com.google.firebase:firebase-bom:32.0.0")
     implementation("com.google.firebase:firebase-firestore:24.6.0")
- //   implementation("com.github.yuriy-budiyev:code-scanner:2.3.2")
-  //  implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-   // implementation("com.google.zxing:core:3.5.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }

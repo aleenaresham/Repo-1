@@ -91,7 +91,7 @@ public class Loginpage extends AppCompatActivity {
                     // ✅ CHECK SESSION BEFORE GOING TO QR
                     if (isSessionValid()) {
                         Toast.makeText(Loginpage.this, "✅ Session valid! Going to QR...", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Loginpage.this, Qr.class);
+                        Intent intent = new Intent(Loginpage.this, activity_qr.class);
                         startActivity(intent);
                         finish();
                     } else {
@@ -174,7 +174,7 @@ public class Loginpage extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Intent intent = new Intent(Loginpage.this, Qr.class);
+                                    Intent intent = new Intent(Loginpage.this, activity_qr.class);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -259,7 +259,7 @@ public class Loginpage extends AppCompatActivity {
                 @Override
                 public void run() {
                     // Auto login - direct QR page par le jao
-                    Intent intent = new Intent(Loginpage.this, Qr.class);
+                    Intent intent = new Intent(Loginpage.this, activity_qr.class);
                     startActivity(intent);
                     finish();
                 }
