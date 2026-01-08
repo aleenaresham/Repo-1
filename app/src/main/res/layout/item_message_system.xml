@@ -14,8 +14,7 @@
         android:background="#E0E0E0"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
-        android:maxWidth="90%"
-        android:elevation="1dp">
+        android:maxWidth="300dp">
 
         <TextView
             android:id="@+id/tvMessage"

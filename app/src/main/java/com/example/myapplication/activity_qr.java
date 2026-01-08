@@ -22,7 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 public class activity_qr extends AppCompatActivity {
 
     private TextView tvResult;
-    private Button btnScan, btnBack, btnLogout;
+    private Button btnScan, btnBack, btnLogout, btnGotoDashboard;
     private FirebaseAuth mAuth;
     private SharedPreferences sharedPreferences;
 
@@ -41,7 +41,27 @@ public class activity_qr extends AppCompatActivity {
         tvResult = findViewById(R.id.tv_result);
         btnScan = findViewById(R.id.btn_scan);
         btnBack = findViewById(R.id.btn_back);
-        btnLogout = findViewById(R.id.btn_logout); // Make sure this ID matches XML
+        btnLogout = findViewById(R.id.btn_logout);
+        btnGotoDashboard = findViewById(R.id.btn_goto_dashboard); // Initialize dashboard button
+
+        // Dashboard button click
+        btnGotoDashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to Dashboard Activity
+                Intent intent = new Intent(activity_qr.this, activity_dashboard.class);
+                startActivity(intent);
+                finish(); // Close current activity
+            }
+        });
+
+        // Logout button click
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutUser();
+            }
+        });
 
         // Scan button click
         btnScan.setOnClickListener(v -> {
@@ -52,17 +72,9 @@ public class activity_qr extends AppCompatActivity {
         btnBack.setOnClickListener(v -> {
             finish();
         });
-
-        // ✅ LOGOUT BUTTON CLICK
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logoutUser();
-            }
-        });
     }
 
-    // ✅ LOGOUT METHOD
+    // LOGOUT METHOD
     private void logoutUser() {
         // Clear session from SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -81,7 +93,7 @@ public class activity_qr extends AppCompatActivity {
         finish();
     }
 
-    // ✅ CHECK IF USER IS LOGGED IN (Optional security check)
+    // CHECK IF USER IS LOGGED IN (Optional security check)
     @Override
     protected void onStart() {
         super.onStart();

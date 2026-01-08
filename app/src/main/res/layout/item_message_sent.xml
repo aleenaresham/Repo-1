@@ -14,8 +14,7 @@
         android:background="#4CAF50"
         android:padding="12dp"
         android:layout_gravity="end"
-        android:maxWidth="80%"
-        android:elevation="2dp"
+        android:maxWidth="280dp"
         android:layout_marginStart="48dp">
 
         <TextView

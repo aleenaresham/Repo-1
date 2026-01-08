@@ -5,23 +5,45 @@
     android:background="#FFFFFF"
     android:padding="16dp">
 
-    <!-- Logout Button - Top Right Corner -->
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="wrap_content"
+    <!-- Top Buttons Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🚪 Logout"
-        android:textSize="14sp"
-        android:textColor="#FFFFFF"
-        android:background="#FF5722"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true" />
+        android:layout_marginBottom="20dp"
+        android:gravity="end">
+
+        <!-- Go to Dashboard Button -->
+        <Button
+            android:id="@+id/btn_goto_dashboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📊 Dashboard"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="#8A2BE2"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Logout Button -->
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🚪 Logout"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="#FF5722"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
 
     <!-- Main Content Container -->
     <LinearLayout
@@ -29,7 +51,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:layout_below="@id/btn_logout">
 
         <!-- App Logo/Title -->
         <TextView
