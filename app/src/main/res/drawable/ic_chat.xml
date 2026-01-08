@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Left chat bubble -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M20,2H4C2.9,2 2,2.9 2,4V22L6,18H20C21.1,18 22,17.1 22,16V4C22,2.9 21.1,2 20,2ZM20,16H5.17L4,17.17V4H20V16Z"/>
+
+    <!-- Right chat bubble -->
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M6,12H18V14H6V12ZM6,8H18V10H6V8ZM6,16H14V18H6V16Z"
+        android:translateX="2"
+        android:translateY="2"/>
+
+    <!-- Online indicator -->
+    <circle
+        android:fillColor="#4CAF50"
+        android:cx="19"
+        android:cy="5"
+        android:r="3"/>
+</vector>

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+
 }
 
 android {
@@ -47,4 +48,17 @@ dependencies {
     implementation("com.google.firebase:firebase-bom:32.0.0")
     implementation("com.google.firebase:firebase-firestore:24.6.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    // Firebase
+    implementation ("com.google.firebase:firebase-database:20.2.2")
+    implementation ("com.google.firebase:firebase-core:21.1.1")
+
+    // AdMob
+    implementation ("com.google.android.gms:play-services-ads:22.2.0")
+
+
 }
