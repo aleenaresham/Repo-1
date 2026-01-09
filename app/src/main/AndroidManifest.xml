@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Internet permission (ads ke liye zaroori) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -20,17 +23,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+
+        <!-- YEH LINE ADD KAREIN (TEST APP ID) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
         <activity
-            android:name=".userchat"
+            android:name=".activity_userchat"
             android:exported="false" />
         <activity
-            android:name=".chatbot"
+            android:name=".activity_chatbot"
             android:exported="false" />
         <activity
-            android:name=".dashboard"
+            android:name=".activity_dashboard"
             android:exported="false" />
         <activity
-            android:name=".advertising"
+            android:name=".activity_advertising"
             android:exported="false" />
         <activity
             android:name=".forgotpass"
@@ -56,3 +64,4 @@
     </application>
 
 </manifest>
+

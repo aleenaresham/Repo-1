@@ -14,6 +14,10 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.AdListener;
 
 public class activity_advertising extends AppCompatActivity {
 
@@ -23,6 +27,9 @@ public class activity_advertising extends AppCompatActivity {
     private TextView tvAdStatus, tvAdCounter;
     private int adCount = 0;
     private boolean isBannerVisible = true;
+
+    // ✅ POINT 2: Interstitial Ad Variable
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +52,14 @@ public class activity_advertising extends AppCompatActivity {
         TextView tvTitle = findViewById(R.id.tvTitle);
         tvTitle.setText("Advertising (AdMob)");
 
-        // Initialize AdMob
+        // ✅ POINT 1: Initialize AdMob
         initializeAdMob();
 
         // Setup button listeners
         setupButtonListeners();
+
+        // ✅ POINT 3: Load first interstitial ad
+        loadInterstitialAd();
     }
 
     private void initializeAdMob() {
@@ -57,35 +67,102 @@ public class activity_advertising extends AppCompatActivity {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
                 tvAdStatus.setText("Status: AdMob Initialized • Test Mode Active");
+
+                // ✅ POINT 4: Banner Ad Load
                 loadBannerAd();
-                setupInterstitialAd();
+
+                // ✅ POINT 5: Setup Banner Ad Listener
+                setupBannerAdListener();
             }
         });
     }
 
     private void loadBannerAd() {
-        // Load test banner ad
+        // ✅ POINT 6: Test Banner Ad
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
-
-        // Show success message
-        Toast.makeText(this, "Banner ad loaded (Test Mode)", Toast.LENGTH_SHORT).show();
     }
 
-    private void setupInterstitialAd() {
-        // Enable interstitial button
-        btnInterstitial.setEnabled(true);
-        btnInterstitial.setText("Show Interstitial Ad");
+    private void setupBannerAdListener() {
+        bannerAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                tvAdStatus.setText("Status: Banner loaded • Test Mode");
+                Toast.makeText(activity_advertising.this,
+                        "✅ Banner ad loaded (Test Mode)",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                tvAdStatus.setText("Status: Banner failed • " + adError.getMessage());
+            }
+        });
+    }
+
+    private void loadInterstitialAd() {
+        // ✅ POINT 7: Load Interstitial Ad
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(this,
+                "ca-app-pub-3940256099942544/1033173712", // Test Interstitial ID
+                adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(InterstitialAd interstitialAd) {
+                        mInterstitialAd = interstitialAd;
+                        tvAdStatus.setText("Status: Interstitial loaded • Ready");
+                        btnInterstitial.setText("Show Interstitial Ad");
+                        btnInterstitial.setEnabled(true);
+
+                        // ✅ POINT 8: Setup Interstitial Callback
+                        setupInterstitialCallback();
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        mInterstitialAd = null;
+                        tvAdStatus.setText("Status: Interstitial failed • " + loadAdError.getMessage());
+                        btnInterstitial.setText("Load Failed");
+                    }
+                });
+    }
+
+    private void setupInterstitialCallback() {
+        mInterstitialAd.setFullScreenContentCallback(new com.google.android.gms.ads.FullScreenContentCallback() {
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                // ✅ POINT 9: Ad closed, load next ad
+                tvAdStatus.setText("Status: Interstitial closed • Loading next");
+                mInterstitialAd = null;
+                loadInterstitialAd();
+
+                // Increment counter
+                adCount++;
+                tvAdCounter.setText("Ads shown: " + adCount);
+            }
+
+            @Override
+            public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
+                tvAdStatus.setText("Status: Failed to show • " + adError.getMessage());
+                mInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdShowedFullScreenContent() {
+                tvAdStatus.setText("Status: Interstitial showing");
+            }
+        });
     }
 
     private void setupButtonListeners() {
-        // Toggle Banner button
+        // ✅ POINT 10: Toggle Banner Ad
         btnToggleBanner.setOnClickListener(v -> toggleBannerAd());
 
-        // Interstitial button
+        // ✅ POINT 11: Show Interstitial Ad
         btnInterstitial.setOnClickListener(v -> showInterstitialAd());
 
-        // Test Ad Info button
+        // ✅ POINT 12: Test Ad Information
         btnTestAdInfo.setOnClickListener(v -> showTestAdInfo());
     }
 
@@ -99,45 +176,42 @@ public class activity_advertising extends AppCompatActivity {
             adContainer.setVisibility(View.VISIBLE);
             btnToggleBanner.setText("Hide Banner Ad");
             isBannerVisible = true;
+
+            // Reload banner when showing
+            loadBannerAd();
             Toast.makeText(this, "Banner ad displayed", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void showInterstitialAd() {
-        // Increment ad counter
-        adCount++;
-        tvAdCounter.setText("Ads shown: " + adCount);
+        if (mInterstitialAd != null) {
+            // ✅ POINT 13: Display Real Interstitial Ad
+            mInterstitialAd.show(activity_advertising.this);
+            btnInterstitial.setEnabled(false);
+            btnInterstitial.setText("Showing ad...");
+        } else {
+            Toast.makeText(this,
+                    "Ad not ready yet. Please wait...",
+                    Toast.LENGTH_SHORT).show();
 
-        // Show interstitial ad simulation
-        Toast.makeText(this,
-                "Interstitial Ad Displayed\n\n" +
-                        "• Full-screen ad\n" +
-                        "• Shown at natural app breaks\n" +
-                        "• Test ad unit ID: ca-app-pub-3940256099942544/1033173712",
-                Toast.LENGTH_LONG).show();
-
-        // Update status
-        tvAdStatus.setText("Status: Interstitial shown • Ready for next ad");
-
-        // Disable button temporarily
-        btnInterstitial.setEnabled(false);
-        btnInterstitial.setText("Loading next ad...");
-
-        // Re-enable after delay
-        new android.os.Handler().postDelayed(() -> {
-            btnInterstitial.setEnabled(true);
-            btnInterstitial.setText("Show Interstitial Ad");
-        }, 3000);
+            // Try to load again
+            loadInterstitialAd();
+            btnInterstitial.setText("Loading...");
+        }
     }
 
     private void showTestAdInfo() {
         Toast.makeText(this,
-                "Test Ad Information:\n\n" +
-                        "Banner Ad Unit ID:\n" +
+                "📱 AdMob Test Configuration:\n\n" +
+                        "✅ Banner Ad (Test):\n" +
                         "ca-app-pub-3940256099942544/6300978111\n\n" +
-                        "Interstitial Ad Unit ID:\n" +
+                        "✅ Interstitial Ad (Test):\n" +
                         "ca-app-pub-3940256099942544/1033173712\n\n" +
-                        "Note: Test ads are acceptable for development",
+                        "✅ Note:\n" +
+                        "• Test ads are acceptable for development\n" +
+                        "• Real ads need own Ad Unit IDs\n" +
+                        "• Banner at bottom\n" +
+                        "• Interstitial on button click",
                 Toast.LENGTH_LONG).show();
     }
 

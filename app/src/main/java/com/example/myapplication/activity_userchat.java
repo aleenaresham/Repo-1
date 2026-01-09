@@ -4,16 +4,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton; // IMPORTANT: ImageButton import
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +29,7 @@ public class activity_userchat extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private EditText inputMessage;
-    private ImageButton btnSend; // CHANGED: Button → ImageButton
+    private ImageButton btnSend;
     private Button btnClearChat, btnSwitchUser;
     private TextView tvStatus, tvLastMessage, tvCurrentUser;
 
@@ -33,6 +37,7 @@ public class activity_userchat extends AppCompatActivity {
     private userchatadapter adapter;
     private DatabaseReference databaseRef;
 
+    private String chatRoomId = "user1_user2_chat";
     private String currentUserId = "user1";
     private String otherUserId = "user2";
 
@@ -44,7 +49,7 @@ public class activity_userchat extends AppCompatActivity {
         // Initialize views
         recyclerView = findViewById(R.id.recyclerView);
         inputMessage = findViewById(R.id.inputMessage);
-        btnSend = findViewById(R.id.btnSend); // Now works with ImageButton
+        btnSend = findViewById(R.id.btnSend);
         btnClearChat = findViewById(R.id.btnClearChat);
         btnSwitchUser = findViewById(R.id.btnSwitchUser);
         tvStatus = findViewById(R.id.tvStatus);
@@ -63,16 +68,14 @@ public class activity_userchat extends AppCompatActivity {
 
         // Initialize message list
         messageList = new ArrayList<>();
-        loadSampleMessages();
 
         // Setup RecyclerView
         adapter = new userchatadapter(messageList, currentUserId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Update UI
-        updateUserInfo();
-        tvStatus.setText("Status: Connected to Firebase • Online");
+        // Load sample messages
+        loadSampleMessages();
 
         // Setup button listeners
         setupButtonListeners();
@@ -84,58 +87,66 @@ public class activity_userchat extends AppCompatActivity {
     private void initializeFirebase() {
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            databaseRef = database.getReference("chats");
-            tvStatus.setText("Status: Firebase Connected • Real-time sync active");
+            databaseRef = database.getReference("chats").child(chatRoomId);
+            tvStatus.setText("Status: Firebase Connected • Real-time active");
+            loadMessagesFromFirebase();
         } catch (Exception e) {
-            tvStatus.setText("Status: Firebase Offline • Using local storage");
+            tvStatus.setText("Status: Using Local Demo");
+            Toast.makeText(this, "Firebase: Local mode", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadMessagesFromFirebase() {
+        if (databaseRef != null) {
+            databaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    messageList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        ChatMessage message = snapshot.getValue(ChatMessage.class);
+                        if (message != null) {
+                            messageList.add(message);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                    if (!messageList.isEmpty()) {
+                        updateLastMessageTime(messageList.get(messageList.size() - 1).getTimestamp());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    tvStatus.setText("Status: Error loading");
+                }
+            });
         }
     }
 
     private void loadSampleMessages() {
-        // Add sample messages with timestamps
         long currentTime = System.currentTimeMillis();
 
-        ChatMessage msg1 = new ChatMessage();
-        msg1.setMessage("Hey! Ready to test the real-time chat?");
-        msg1.setSender(otherUserId);
-        msg1.setTimestamp(currentTime - 600000); // 10 minutes ago
-        messageList.add(msg1);
+        // Sample messages
+        addMessage("Hello! Testing real-time chat", otherUserId, currentTime - 600000);
+        addMessage("Yes! Firebase messages work", currentUserId, currentTime - 300000);
+        addMessage("Messages are timestamped", otherUserId, currentTime - 120000);
+        addMessage("Perfect! Real-time demo", currentUserId, currentTime);
+    }
 
-        ChatMessage msg2 = new ChatMessage();
-        msg2.setMessage("Yes! This uses Firebase Firestore for instant messaging");
-        msg2.setSender(currentUserId);
-        msg2.setTimestamp(currentTime - 300000); // 5 minutes ago
-        messageList.add(msg2);
-
-        ChatMessage msg3 = new ChatMessage();
-        msg3.setMessage("Can you see messages in real-time?");
-        msg3.setSender(otherUserId);
-        msg3.setTimestamp(currentTime - 120000); // 2 minutes ago
-        messageList.add(msg3);
-
-        ChatMessage msg4 = new ChatMessage();
-        msg4.setMessage("Absolutely! Messages sync instantly across devices");
-        msg4.setSender(currentUserId);
-        msg4.setTimestamp(currentTime); // Now
-        messageList.add(msg4);
-
-        // Update last message time
-        updateLastMessageTime(currentTime);
+    private void addMessage(String text, String sender, long time) {
+        ChatMessage msg = new ChatMessage();
+        msg.setMessage(text);
+        msg.setSender(sender);
+        msg.setTimestamp(time);
+        messageList.add(msg);
     }
 
     private void setupButtonListeners() {
-        // Send button
         btnSend.setOnClickListener(v -> sendMessage());
-
-        // Clear chat button
         btnClearChat.setOnClickListener(v -> clearChat());
-
-        // Switch user button
         btnSwitchUser.setOnClickListener(v -> switchUser());
 
-        // Send on Enter key
         inputMessage.setOnKeyListener((v, keyCode, event) -> {
-            if (keyCode == 66) { // Enter key
+            if (keyCode == 66) {
                 sendMessage();
                 return true;
             }
@@ -146,67 +157,28 @@ public class activity_userchat extends AppCompatActivity {
     private void sendMessage() {
         String messageText = inputMessage.getText().toString().trim();
         if (!messageText.isEmpty()) {
-            // Create message object
+            long timestamp = System.currentTimeMillis();
+
             ChatMessage message = new ChatMessage();
             message.setMessage(messageText);
             message.setSender(currentUserId);
-            message.setTimestamp(System.currentTimeMillis());
+            message.setReceiver(otherUserId);
+            message.setTimestamp(timestamp);
+
+            // Save to Firebase
+            if (databaseRef != null) {
+                String key = databaseRef.push().getKey();
+                message.setMessageId(key);
+                databaseRef.child(key).setValue(message);
+            }
 
             // Add to local list
             messageList.add(message);
             adapter.notifyItemInserted(messageList.size() - 1);
-            recyclerView.scrollToPosition(messageList.size() - 1);
             inputMessage.setText("");
 
-            // Save to Firebase if available
-            if (databaseRef != null) {
-                String key = databaseRef.push().getKey();
-                databaseRef.child(key).setValue(message);
-            }
-
-            // Update last message time
-            updateLastMessageTime(message.getTimestamp());
-
-            // Simulate reply from other user
-            simulateReply(messageText);
-
-            // Show success message
+            updateLastMessageTime(timestamp);
             Toast.makeText(this, "Message sent", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void simulateReply(String userMessage) {
-        new android.os.Handler().postDelayed(() -> {
-            String reply = generateReply(userMessage);
-
-            ChatMessage replyMessage = new ChatMessage();
-            replyMessage.setMessage(reply);
-            replyMessage.setSender(otherUserId);
-            replyMessage.setTimestamp(System.currentTimeMillis());
-
-            messageList.add(replyMessage);
-            adapter.notifyItemInserted(messageList.size() - 1);
-            recyclerView.scrollToPosition(messageList.size() - 1);
-
-            // Update last message time
-            updateLastMessageTime(replyMessage.getTimestamp());
-        }, 2000);
-    }
-
-    private String generateReply(String userMessage) {
-        String lowerMsg = userMessage.toLowerCase();
-
-        if (lowerMsg.contains("hello") || lowerMsg.contains("hi") || lowerMsg.contains("hey")) {
-            return "Hi there! Thanks for your message. This is a simulated reply.";
-        } else if (lowerMsg.contains("firebase")) {
-            return "Yes, Firebase provides real-time database sync across all devices!";
-        } else if (lowerMsg.contains("timestamp") || lowerMsg.contains("time")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
-            return "Message received at " + sdf.format(new Date()) + " with timestamp.";
-        } else if (lowerMsg.contains("how are you")) {
-            return "I'm doing great! Just simulating real-time chat responses.";
-        } else {
-            return "I received your message: \"" + userMessage + "\". This simulates real-time chat!";
         }
     }
 
@@ -214,41 +186,41 @@ public class activity_userchat extends AppCompatActivity {
         messageList.clear();
         adapter.notifyDataSetChanged();
 
+        // Clear Firebase
+        if (databaseRef != null) {
+            databaseRef.removeValue();
+        }
+
         // Add system message
         ChatMessage systemMsg = new ChatMessage();
-        systemMsg.setMessage("Chat cleared. Start a new conversation!");
+        systemMsg.setMessage("Chat cleared");
         systemMsg.setSender("system");
         systemMsg.setTimestamp(System.currentTimeMillis());
         messageList.add(systemMsg);
         adapter.notifyItemInserted(0);
 
-        tvLastMessage.setText("Last message: Chat cleared");
-        Toast.makeText(this, "Chat history cleared", Toast.LENGTH_SHORT).show();
+        tvLastMessage.setText("Last: Chat cleared");
+        Toast.makeText(this, "Chat cleared", Toast.LENGTH_SHORT).show();
     }
 
     private void switchUser() {
-        if (currentUserId.equals("user1")) {
-            currentUserId = "user2";
-            otherUserId = "user1";
-        } else {
-            currentUserId = "user1";
-            otherUserId = "user2";
-        }
+        String temp = currentUserId;
+        currentUserId = otherUserId;
+        otherUserId = temp;
 
         adapter.setCurrentUserId(currentUserId);
         adapter.notifyDataSetChanged();
         updateUserInfo();
-
-        Toast.makeText(this, "Switched to User: " + currentUserId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Switched to: " + currentUserId, Toast.LENGTH_SHORT).show();
     }
 
     private void updateUserInfo() {
-        tvCurrentUser.setText("Current User: " + currentUserId);
+        tvCurrentUser.setText("User: " + currentUserId);
     }
 
     private void updateLastMessageTime(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
         String time = sdf.format(new Date(timestamp));
-        tvLastMessage.setText("Last message: " + time);
+        tvLastMessage.setText("Last: " + time);
     }
 }

@@ -57,6 +57,11 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:20.2.2")
     implementation ("com.google.firebase:firebase-core:21.1.1")
 
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("org.json:json:20230227")
+
+    implementation("androidx.cardview:cardview:1.0.0")
+
     // AdMob
     implementation ("com.google.android.gms:play-services-ads:22.2.0")
 
