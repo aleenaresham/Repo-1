@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#F3E5F5"
+        android:background="#7B1FA2"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
         android:gravity="center_vertical">
@@ -64,9 +64,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Status: Active"
+            android:text="Status: Connected • English"
             android:textSize="12sp"
             android:textColor="#7B1FA2" />
+
+        <!-- ✅ UPDATED: Language Button (Bigger size) -->
+        <Button
+            android:id="@+id/btnLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="🌐 EN"
+            android:textSize="20sp"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="4dp"
+            android:background="@drawable/bg_language_button"
+            android:textColor="#7B1FA2"
+            android:layout_marginEnd="8dp" />
 
         <TextView
             android:id="@+id/tvTokenInfo"
@@ -106,7 +119,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Ask about app features, ads, or chat..."
+                android:hint="Type your message..."
                 android:inputType="textMultiLine"
                 android:maxLines="3"
                 android:minHeight="48dp"
@@ -161,6 +174,15 @@
                 android:text="✓ Natural language responses"
                 android:textSize="11sp"
                 android:textColor="#666666" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✓ Multilingual"
+                android:textSize="11sp"
+                android:textColor="#7B1FA2"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp" />
         </LinearLayout>
     </LinearLayout>
 

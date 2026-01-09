@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +18,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -33,17 +37,22 @@ public class activity_chatbot extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EditText inputMessage;
     private ImageButton btnSend;
-    private Button btnTokenizationDemo;
+    private Button btnTokenizationDemo, btnLanguage;
     private TextView tvStatus, tvTokenInfo;
 
     private List<ChatMessage> messageList;
     private chatbotadapter adapter;
 
-    // ✅ Google Gemini API Configuration
+    // ✅ Google Gemini API
     private static final String API_KEY = "AIzaSyAi_iu3bTFc0FhriQnnar1g7--D8KZA_ig";
     private static final String URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
     private OkHttpClient client;
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+    // ✅ Multilingual Support
+    private String currentLanguage = "en"; // Default: English
+    private Map<String, String> languageNames;
+    private Map<String, String> languageFlags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,7 @@ public class activity_chatbot extends AppCompatActivity {
         inputMessage = findViewById(R.id.inputMessage);
         btnSend = findViewById(R.id.btnSend);
         btnTokenizationDemo = findViewById(R.id.btnTokenizationDemo);
+        btnLanguage = findViewById(R.id.btnLanguage);
         TextView tvTitle = findViewById(R.id.tvTitle);
         tvStatus = findViewById(R.id.tvStatus);
         tvTokenInfo = findViewById(R.id.tvTokenInfo);
@@ -63,28 +73,22 @@ public class activity_chatbot extends AppCompatActivity {
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
-        tvTitle.setText("AI Chatbot (Google Gemini)");
+        tvTitle.setText("AI Chatbot (Multilingual)");
 
-        // Initialize OkHttp client
+        // Initialize OkHttp
         client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
+        // Initialize multilingual support
+        initializeLanguages();
+
         // Initialize message list
         messageList = new ArrayList<>();
 
-        // Add welcome message
-        ChatMessage welcomeMsg = new ChatMessage();
-        welcomeMsg.setMessage("Hello! I'm your AI assistant powered by Google Gemini. I can help you with:\n\n" +
-                "• App features and usage\n" +
-                "• Password reset queries\n" +
-                "• Advertisement information\n" +
-                "• Real-time chat functionality\n\n" +
-                "What would you like to know?");
-        welcomeMsg.setSender("bot");
-        welcomeMsg.setTimestamp(System.currentTimeMillis());
-        messageList.add(welcomeMsg);
+        // Add welcome message in current language
+        addWelcomeMessage();
 
         // Setup RecyclerView
         adapter = new chatbotadapter(messageList);
@@ -92,14 +96,74 @@ public class activity_chatbot extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Set status
-        tvStatus.setText("Status: Connected to Google Gemini • NLP Active");
-        tvTokenInfo.setText("NLP: Ready");
+        updateStatus();
 
-        // Send button click
+        // Setup button listeners
+        setupButtonListeners();
+
+        // Scroll to bottom
+        recyclerView.scrollToPosition(messageList.size() - 1);
+    }
+
+    private void initializeLanguages() {
+        // Language names
+        languageNames = new HashMap<>();
+        languageNames.put("en", "English");
+        languageNames.put("hi", "Hindi");
+        languageNames.put("es", "Spanish");
+        languageNames.put("fr", "French");
+        languageNames.put("de", "German");
+        languageNames.put("zh", "Chinese");
+        languageNames.put("ar", "Arabic");
+        languageNames.put("bn", "Bengali");
+        languageNames.put("ur", "Urdu");
+
+        // Language flags/emojis
+        languageFlags = new HashMap<>();
+        languageFlags.put("en", "🇺🇸");
+        languageFlags.put("hi", "🇮🇳");
+        languageFlags.put("es", "🇪🇸");
+        languageFlags.put("fr", "🇫🇷");
+        languageFlags.put("de", "🇩🇪");
+        languageFlags.put("zh", "🇨🇳");
+        languageFlags.put("ar", "🇸🇦");
+        languageFlags.put("bn", "🇧🇩");
+        languageFlags.put("ur", "🇵🇰");
+    }
+
+    private void addWelcomeMessage() {
+        Map<String, String> welcomeMessages = new HashMap<>();
+        welcomeMessages.put("en", "Hello! I'm your AI assistant. I can help you with app features, password reset, ads, and real-time chat. What would you like to know?");
+        welcomeMessages.put("hi", "नमस्ते! मैं आपकी AI सहायक हूं। मैं आपकी ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों और रीयल-टाइम चैट में मदद कर सकती हूं। आप क्या जानना चाहते हैं?");
+        welcomeMessages.put("es", "¡Hola! Soy tu asistente de IA. Puedo ayudarte con funciones de la aplicación, restablecimiento de contraseñas, anuncios y chat en tiempo real. ¿Qué te gustaría saber?");
+        welcomeMessages.put("fr", "Bonjour ! Je suis votre assistant IA. Je peux vous aider avec les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités et le chat en temps réel. Que voudriez-vous savoir ?");
+        welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
+
+        ChatMessage welcomeMsg = new ChatMessage();
+        welcomeMsg.setMessage(welcomeMessages.getOrDefault(currentLanguage, welcomeMessages.get("en")));
+        welcomeMsg.setSender("bot");
+        welcomeMsg.setTimestamp(System.currentTimeMillis());
+        messageList.add(welcomeMsg);
+    }
+
+    private void updateStatus() {
+        String langName = languageNames.get(currentLanguage);
+        String flag = languageFlags.get(currentLanguage);
+        tvStatus.setText("Status: Connected • " + flag + " " + langName);
+
+        // Update language button
+        btnLanguage.setText(flag + " " + currentLanguage.toUpperCase());
+    }
+
+    private void setupButtonListeners() {
+        // Send button
         btnSend.setOnClickListener(v -> sendMessage());
 
         // Tokenization Demo button
         btnTokenizationDemo.setOnClickListener(v -> showTokenizationDemo());
+
+        // Language button
+        btnLanguage.setOnClickListener(v -> showLanguageSelectionDialog());
 
         // Send on Enter key
         inputMessage.setOnKeyListener((v, keyCode, event) -> {
@@ -109,17 +173,49 @@ public class activity_chatbot extends AppCompatActivity {
             }
             return false;
         });
+    }
 
-        // Scroll to bottom
-        recyclerView.scrollToPosition(messageList.size() - 1);
+    private void showLanguageSelectionDialog() {
+        String[] languages = {"English 🇺🇸", "Hindi 🇮🇳", "Spanish 🇪🇸", "French 🇫🇷",
+                "German 🇩🇪", "Chinese 🇨🇳", "Arabic 🇸🇦", "Bengali 🇧🇩", "Urdu 🇵🇰"};
+        String[] codes = {"en", "hi", "es", "fr", "de", "zh", "ar", "bn", "ur"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Language")
+                .setItems(languages, (dialog, which) -> {
+                    currentLanguage = codes[which];
+                    updateStatus();
+
+                    // Update welcome message in new language
+                    updateWelcomeMessage();
+
+                    Toast.makeText(this, "Language changed to " + languages[which],
+                            Toast.LENGTH_SHORT).show();
+                });
+        builder.show();
+    }
+
+    private void updateWelcomeMessage() {
+        Map<String, String> welcomeMessages = new HashMap<>();
+        welcomeMessages.put("en", "Hello! I'm your AI assistant. I can help you with app features, password reset, ads, and real-time chat. What would you like to know?");
+        welcomeMessages.put("hi", "नमस्ते! मैं आपकी AI सहायक हूं। मैं आपकी ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों और रीयल-टाइम चैट में मदद कर सकती हूं। आप क्या जानना चाहते हैं?");
+        welcomeMessages.put("es", "¡Hola! Soy tu asistente de IA. Puedo ayudarte con funciones de la aplicación, restablecimiento de contraseñas, anuncios y chat en tiempo real. ¿Qué te gustaría saber?");
+        welcomeMessages.put("fr", "Bonjour ! Je suis votre assistant IA. Je peux vous aider avec les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités et le chat en temps réel. Que voudriez-vous savoir ?");
+        welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
+
+        if (!messageList.isEmpty()) {
+            messageList.get(0).setMessage(welcomeMessages.getOrDefault(currentLanguage,
+                    welcomeMessages.get("en")));
+            adapter.notifyItemChanged(0);
+        }
     }
 
     private void sendMessage() {
-        String message = inputMessage.getText().toString().trim();
-        if (!message.isEmpty()) {
+        String messageText = inputMessage.getText().toString().trim();
+        if (!messageText.isEmpty()) {
             // Add user message
             ChatMessage userMsg = new ChatMessage();
-            userMsg.setMessage(message);
+            userMsg.setMessage(messageText);
             userMsg.setSender("user");
             userMsg.setTimestamp(System.currentTimeMillis());
             messageList.add(userMsg);
@@ -130,13 +226,12 @@ public class activity_chatbot extends AppCompatActivity {
             // Show typing indicator
             showTypingIndicator();
 
-            // Generate AI response using Google Gemini API
-            generateAIResponse(message);
+            // Generate AI response
+            generateAIResponse(messageText);
         }
     }
 
     private void showTypingIndicator() {
-        // Add typing indicator
         ChatMessage typingMsg = new ChatMessage();
         typingMsg.setMessage("...");
         typingMsg.setSender("typing");
@@ -154,70 +249,46 @@ public class activity_chatbot extends AppCompatActivity {
     }
 
     private void generateAIResponse(String userMessage) {
-        // Remove typing indicator
         removeTypingIndicator();
 
-        // Prepare the request body for Gemini API
+        // Add language-specific prompt
+        String languagePrompt = getLanguagePrompt(currentLanguage);
+        String enhancedMessage = languagePrompt + userMessage;
+
+        // Prepare Gemini API request
         JSONObject jsonBody = new JSONObject();
         try {
             JSONObject content = new JSONObject();
-            JSONObject textPart = new JSONObject();
-            textPart.put("text", userMessage);
-
             JSONObject part = new JSONObject();
-            part.put("text", userMessage);
+            part.put("text", enhancedMessage);
 
             content.put("parts", new org.json.JSONArray().put(part));
             content.put("role", "user");
 
             jsonBody.put("contents", new org.json.JSONArray().put(content));
 
-            // Add safety settings (optional)
-            JSONObject safetySettings = new JSONObject();
-            safetySettings.put("category", "HARM_CATEGORY_DANGEROUS_CONTENT");
-            safetySettings.put("threshold", "BLOCK_MEDIUM_AND_ABOVE");
-
-            jsonBody.put("safetySettings", new org.json.JSONArray().put(safetySettings));
-
             // Add generation config
             JSONObject generationConfig = new JSONObject();
             generationConfig.put("temperature", 0.7);
-            generationConfig.put("topK", 1);
-            generationConfig.put("topP", 0.8);
             generationConfig.put("maxOutputTokens", 1000);
-
             jsonBody.put("generationConfig", generationConfig);
 
         } catch (JSONException e) {
             e.printStackTrace();
-            showError("Error creating request");
+            showLocalResponse(userMessage);
             return;
         }
 
+        // Call Gemini API
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-        Request request = new Request.Builder()
-                .url(URL)
-                .post(body)
-                .build();
+        Request request = new Request.Builder().url(URL).post(body).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
-                    // Show error message
-                    ChatMessage errorMsg = new ChatMessage();
-                    errorMsg.setMessage("⚠️ I'm having trouble connecting to the AI service. Using local responses.\n\n" +
-                            "Original query: \"" + userMessage + "\"");
-                    errorMsg.setSender("bot");
-                    errorMsg.setTimestamp(System.currentTimeMillis());
-                    messageList.add(errorMsg);
-                    adapter.notifyItemInserted(messageList.size() - 1);
-                    recyclerView.scrollToPosition(messageList.size() - 1);
-
-                    tvStatus.setText("Status: Using Local Mode");
-
-                    // Fallback to local response
                     showLocalResponse(userMessage);
+                    tvStatus.setText("Status: Using Local Responses");
                 });
             }
 
@@ -227,127 +298,130 @@ public class activity_chatbot extends AppCompatActivity {
                     try {
                         String responseBody = response.body().string();
                         JSONObject jsonResponse = new JSONObject(responseBody);
-
-                        // Extract the AI response from JSON
                         String aiResponse = extractAIResponse(jsonResponse);
 
                         runOnUiThread(() -> {
-                            // Add AI response
-                            ChatMessage botMsg = new ChatMessage();
-                            botMsg.setMessage(aiResponse);
-                            botMsg.setSender("bot");
-                            botMsg.setTimestamp(System.currentTimeMillis());
-                            messageList.add(botMsg);
-                            adapter.notifyItemInserted(messageList.size() - 1);
-                            recyclerView.scrollToPosition(messageList.size() - 1);
-
-                            // Update status
-                            tvStatus.setText("Status: Gemini AI Active • Response Generated");
-
-                            // Update tokenization info
-                            updateTokenizationInfo(userMessage);
+                            addBotMessage(aiResponse);
+                            tvStatus.setText("Status: Gemini Active • " +
+                                    languageNames.get(currentLanguage));
                         });
-
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        runOnUiThread(() -> {
-                            showError("Error parsing response");
-                            showLocalResponse(userMessage);
-                        });
+                        runOnUiThread(() -> showLocalResponse(userMessage));
                     }
                 } else {
-                    runOnUiThread(() -> {
-                        showError("API Error: " + response.code());
-                        showLocalResponse(userMessage);
-                    });
+                    runOnUiThread(() -> showLocalResponse(userMessage));
                 }
             }
         });
     }
 
+    private String getLanguagePrompt(String langCode) {
+        Map<String, String> prompts = new HashMap<>();
+        prompts.put("en", "Respond in English about app features, password reset, ads, or chat: ");
+        prompts.put("hi", "ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों या चैट के बारे में हिंदी में उत्तर दें: ");
+        prompts.put("es", "Responde en español sobre funciones de la aplicación, restablecimiento de contraseñas, anuncios o chat: ");
+        prompts.put("fr", "Répondez en français sur les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités ou le chat: ");
+        prompts.put("ur", "ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات یا چیٹ کے بارے میں اردو میں جواب دیں: ");
+
+        return prompts.getOrDefault(langCode, prompts.get("en"));
+    }
+
     private void showLocalResponse(String userMessage) {
-        String response;
+        String response = getLocalResponse(userMessage, currentLanguage);
+        addBotMessage(response);
+    }
+
+    private String getLocalResponse(String userMessage, String langCode) {
         String lowerMsg = userMessage.toLowerCase();
 
-        // AI logic based on user query
-        if (lowerMsg.contains("password") || lowerMsg.contains("reset") || lowerMsg.contains("forgot")) {
-            response = "🔐 **Password Reset Assistance**\n\n" +
-                    "To reset your password:\n\n" +
-                    "1. Go to **Settings > Account**\n" +
-                    "2. Tap **'Reset Password'**\n" +
-                    "3. Enter your registered email\n" +
-                    "4. Check your inbox for reset link\n" +
-                    "5. Click the link and set new password\n\n" +
-                    "📧 Ensure you have access to your email.";
-
-        } else if (lowerMsg.contains("feature") || lowerMsg.contains("function") || lowerMsg.contains("what can")) {
-            response = "📱 **App Features Overview**\n\n" +
-                    "This app has these main features:\n\n" +
-                    "✅ **AI Chatbot** (Google Gemini) - That's me!\n" +
-                    "✅ **AdMob Integration** - Banner & Interstitial ads\n" +
-                    "✅ **Real-Time Chat** - Firebase based messaging\n" +
-                    "✅ **User Authentication** - Secure login system\n" +
-                    "✅ **QR Code Scanner** - Scan and process QR codes\n\n" +
-                    "Which feature would you like to know more about?";
-
-        } else if (lowerMsg.contains("ad") || lowerMsg.contains("ads") || lowerMsg.contains("advertisement")) {
-            response = "📢 **AdMob Integration Details**\n\n" +
-                    "• **Google AdMob** is integrated\n" +
-                    "• **Banner ads** shown at screen bottom\n" +
-                    "• **Interstitial ads** shown on button click\n" +
-                    "• Currently using **TEST ads** for development\n" +
-                    "• Real ads will be shown in production\n\n" +
-                    "You can try the **Ads Demo** from main screen!";
-
-        } else if (lowerMsg.contains("chat") || lowerMsg.contains("message") || lowerMsg.contains("talk")) {
-            response = "💬 **Real-Time Chat Features**\n\n" +
-                    "• Uses **Firebase Firestore** database\n" +
-                    "• **One-to-one** private messaging\n" +
-                    "• Messages are **timestamped**\n" +
-                    "• Online/Offline status shown\n" +
-                    "• Message delivery receipts\n" +
-                    "• Typing indicators\n\n" +
-                    "Try it from the main screen!";
-
-        } else if (lowerMsg.contains("hello") || lowerMsg.contains("hi") || lowerMsg.contains("hey")) {
-            response = "Hello! 👋 I'm your AI assistant.\n\n" +
-                    "I can help you with:\n\n" +
-                    "• **App features** and questions\n" +
-                    "• **Password reset** assistance\n" +
-                    "• **Advertisement** information\n" +
-                    "• **Chat functionality** details\n\n" +
-                    "What would you like to know?";
-
-        } else if (lowerMsg.contains("token") || lowerMsg.contains("nlp") || lowerMsg.contains("natural language")) {
-            response = "🧠 **Natural Language Processing**\n\n" +
-                    "I use **tokenization** to understand your queries:\n\n" +
-                    "1. Break sentences into **tokens** (words)\n" +
-                    "2. Analyze **context** and **intent**\n" +
-                    "3. Generate appropriate **responses**\n" +
-                    "4. Maintain conversation **context**\n\n" +
-                    "Try the **Tokenization Demo** button below!";
-
-        } else {
-            response = "🤔 **Query Analysis**\n\n" +
-                    "I understand you're asking: \n\"" + userMessage + "\"\n\n" +
-                    "As an AI assistant specialized in **app support**, I can help with:\n\n" +
-                    "• **App functionality** questions\n" +
-                    "• **Troubleshooting** issues\n" +
-                    "• **Feature explanations**\n" +
-                    "• **Usage guidance**\n\n" +
-                    "Could you rephrase or ask about specific app features?";
+        // English responses
+        if (langCode.equals("en")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **Password Reset Assistance**\n\n" +
+                        "To reset your password:\n\n" +
+                        "1. Go to **Settings > Account**\n" +
+                        "2. Tap **'Reset Password'**\n" +
+                        "3. Enter your registered email\n" +
+                        "4. Check inbox for reset link\n" +
+                        "5. Click link and set new password";
+            }
+            // ... more English responses
         }
 
-        // Add local response
+        // Hindi responses
+        else if (langCode.equals("hi")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **पासवर्ड रीसेट सहायता**\n\n" +
+                        "पासवर्ड रीसेट करने के लिए:\n\n" +
+                        "1. **सेटिंग्स > अकाउंट** पर जाएं\n" +
+                        "2. **'पासवर्ड रीसेट'** टैप करें\n" +
+                        "3. अपना रजिस्टर्ड ईमेल दर्ज करें\n" +
+                        "4. रीसेट लिंक के लिए अपना इनबॉक्स चेक करें\n" +
+                        "5. लिंक पर क्लिक करें और नया पासवर्ड सेट करें";
+            }
+        }
+
+        // Urdu responses
+        else if (langCode.equals("ur")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **پاس ورڈ ری سیٹ مدد**\n\n" +
+                        "اپنا پاس ورڈ ری سیٹ کرنے کے لیے:\n\n" +
+                        "1. **ترتیبات > اکاؤنٹ** پر جائیں\n" +
+                        "2. **'پاس ورڈ ری سیٹ'** پر ٹیپ کریں\n" +
+                        "3. اپنا رجسٹرڈ ای میل درج کریں\n" +
+                        "4. ری سیٹ لنک کے لیے اپنا ان باکس چیک کریں\n" +
+                        "5. لنک پر کلک کریں اور نیا پاس ورڈ سیٹ کریں";
+            }
+        }
+
+        // Default English response
+        return "I understand you're asking about: \"" + userMessage + "\"\n\n" +
+                "I can help with:\n• App features\n• Password reset\n• Ads information\n• Chat functionality";
+    }
+
+    private void addBotMessage(String message) {
         ChatMessage botMsg = new ChatMessage();
-        botMsg.setMessage(response);
+        botMsg.setMessage(message);
         botMsg.setSender("bot");
         botMsg.setTimestamp(System.currentTimeMillis());
         messageList.add(botMsg);
         adapter.notifyItemInserted(messageList.size() - 1);
         recyclerView.scrollToPosition(messageList.size() - 1);
 
-        updateTokenizationInfo(userMessage);
+        // Update token info
+        updateTokenizationInfo(message);
+    }
+
+    private void showTokenizationDemo() {
+        String exampleQuery = "How do I reset my app password?";
+        String[] tokens = exampleQuery.split("\\s+");
+        int tokenCount = tokens.length;
+
+        StringBuilder tokenList = new StringBuilder();
+        for (int i = 0; i < tokens.length; i++) {
+            tokenList.append(i + 1).append(". ").append(tokens[i]);
+            if (i < tokens.length - 1) tokenList.append("\n");
+        }
+
+        ChatMessage demoMsg = new ChatMessage();
+        demoMsg.setMessage("🔍 **Tokenization Demo**\n\n" +
+                "**Query:** \"" + exampleQuery + "\"\n\n" +
+                "**Tokens:** " + tokenCount + "\n" + tokenList.toString() + "\n\n" +
+                "**Language:** " + languageNames.get(currentLanguage));
+        demoMsg.setSender("system");
+        demoMsg.setTimestamp(System.currentTimeMillis());
+
+        messageList.add(demoMsg);
+        adapter.notifyItemInserted(messageList.size() - 1);
+        recyclerView.scrollToPosition(messageList.size() - 1);
+
+        tvTokenInfo.setText("Tokens: " + tokenCount + " | " + currentLanguage.toUpperCase());
+        Toast.makeText(this, "Tokenization demo shown", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateTokenizationInfo(String message) {
+        int wordCount = message.split("\\s+").length;
+        tvTokenInfo.setText("Tokens: " + wordCount + " | " + currentLanguage.toUpperCase());
     }
 
     private String extractAIResponse(JSONObject jsonResponse) {
@@ -371,74 +445,6 @@ public class activity_chatbot extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return "I received your message. As an AI assistant for this app, I can help with:\n\n" +
-                "• App features and usage\n" +
-                "• Password reset procedures\n" +
-                "• Advertisement information\n" +
-                "• Real-time chat functionality\n\n" +
-                "Could you ask about something specific?";
-    }
-
-    private void showTokenizationDemo() {
-        String exampleQuery = "How do I reset my app password quickly for email verification?";
-
-        // Tokenization analysis
-        String[] tokens = exampleQuery.split("\\s+");
-        int tokenCount = tokens.length;
-
-        // Create token list string
-        StringBuilder tokenList = new StringBuilder();
-        for (int i = 0; i < tokens.length; i++) {
-            tokenList.append(i + 1).append(". ").append(tokens[i]);
-            if (i < tokens.length - 1) tokenList.append("\n");
-        }
-
-        // NLP analysis
-        String intent = "PASSWORD_RESET";
-        String priority = "Quick/Urgent";
-        String entities = "app, password, email, verification";
-
-        // Create demo message
-        ChatMessage demoMsg = new ChatMessage();
-        demoMsg.setMessage("🔍 **Tokenization & NLP Demo**\n\n" +
-                "**Original Query:**\n\"" + exampleQuery + "\"\n\n" +
-                "**Tokenization Results:**\n" +
-                "Total Tokens: " + tokenCount + "\n\n" +
-                "**Token List:**\n" + tokenList.toString() + "\n\n" +
-                "**NLP Analysis:**\n" +
-                "• **Primary Intent:** " + intent + "\n" +
-                "• **Priority:** " + priority + "\n" +
-                "• **Extracted Entities:** " + entities + "\n" +
-                "• **Context:** App-specific password flow\n\n" +
-                "**Process Flow:**\n" +
-                "1. **Tokenization** → Split into " + tokenCount + " words\n" +
-                "2. **POS Tagging** → Identify nouns/verbs\n" +
-                "3. **Intent Detection** → " + intent + "\n" +
-                "4. **Entity Recognition** → " + entities + "\n" +
-                "5. **Response Generation** → Context-aware reply");
-        demoMsg.setSender("system");
-        demoMsg.setTimestamp(System.currentTimeMillis());
-
-        messageList.add(demoMsg);
-        adapter.notifyItemInserted(messageList.size() - 1);
-        recyclerView.scrollToPosition(messageList.size() - 1);
-
-        // Update token info
-        tvTokenInfo.setText("Tokens: " + tokenCount + " | NLP Demo");
-
-        Toast.makeText(this, "Tokenization demo shown", Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateTokenizationInfo(String message) {
-        int wordCount = message.split("\\s+").length;
-        tvTokenInfo.setText("Tokens: " + wordCount + " | NLP Active");
-    }
-
-    private void showError(String errorMessage) {
-        runOnUiThread(() -> {
-            Toast.makeText(activity_chatbot.this, errorMessage, Toast.LENGTH_SHORT).show();
-
-            tvStatus.setText("Status: Error - Using Local Responses");
-        });
+        return "I received your message. I can help with app features, password reset, ads, or chat functionality.";
     }
 }
