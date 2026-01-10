@@ -62,11 +62,11 @@ public class activity_chatbot extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         inputMessage = findViewById(R.id.inputMessage);
         btnSend = findViewById(R.id.btnSend);
-        btnTokenizationDemo = findViewById(R.id.btnTokenizationDemo);
+
         btnLanguage = findViewById(R.id.btnLanguage);
         TextView tvTitle = findViewById(R.id.tvTitle);
         tvStatus = findViewById(R.id.tvStatus);
-        tvTokenInfo = findViewById(R.id.tvTokenInfo);
+
 
         // Setup toolbar
         ImageButton btnBack = findViewById(R.id.btnBack);
@@ -139,7 +139,7 @@ public class activity_chatbot extends AppCompatActivity {
         welcomeMessages.put("de", "Hallo! Ich bin Ihr KI-Assistent. Ich kann Ihnen bei App-Funktionen, Passwort-Reset, Werbung und Echtzeit-Chat helfen. Was möchten Sie wissen?");
         welcomeMessages.put("zh", "你好！我是你的AI助手。我可以帮助你处理应用功能、密码重置、广告和实时聊天。你想知道什么？");
         welcomeMessages.put("ar", "مرحبًا! أنا مساعدك الذكي. يمكنني مساعدتك في ميزات التطبيق، إعادة تعيين كلمة المرور، الإعلانات والدردشة الفورية. ماذا تريد أن تعرف؟");
-        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান؟");
+        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান?");
         welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
 
         ChatMessage welcomeMsg = new ChatMessage();
@@ -162,8 +162,8 @@ public class activity_chatbot extends AppCompatActivity {
         // Send button
         btnSend.setOnClickListener(v -> sendMessage());
 
-        // Tokenization Demo button
-        btnTokenizationDemo.setOnClickListener(v -> showTokenizationDemo());
+//
+
 
         // Language button
         btnLanguage.setOnClickListener(v -> showLanguageSelectionDialog());
@@ -207,7 +207,7 @@ public class activity_chatbot extends AppCompatActivity {
         welcomeMessages.put("de", "Hallo! Ich bin Ihr KI-Assistent. Ich kann Ihnen bei App-Funktionen, Passwort-Reset, Werbung und Echtzeit-Chat helfen. Was möchten Sie wissen?");
         welcomeMessages.put("zh", "你好！我是你的AI助手。我可以帮助你处理应用功能、密码重置、广告和实时聊天。你想知道什么？");
         welcomeMessages.put("ar", "مرحبًا! أنا مساعدك الذكي. يمكنني مساعدتك في ميزات التطبيق، إعادة تعيين كلمة المرور، الإعلانات والدردشة الفورية. ماذا تريد أن تعرف؟");
-        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান؟");
+        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান?");
         welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
 
         if (!messageList.isEmpty()) {
@@ -381,9 +381,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "• **Real-time**: Instant responses\n" +
                         "• **Local Fallback**: Works offline too";
             }
-            return "I understand you're asking about: \"" + userMessage + "\"\n\n" +
-                    "I can help with:\n• App features\n• Password reset\n• Ads information\n• Chat functionality\n\n" +
-                    "Try asking about:\n• How to reset password\n• About ads in the app\n• App features\n• Chat capabilities";
+            // ✅ CHANGED: Short message only
+            return "Please ask things relevant to the app only.";
         }
 
         // ✅ HINDI Responses
@@ -397,8 +396,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. रीसेट लिंक के लिए अपना इनबॉक्स चेक करें\n" +
                         "5. लिंक पर क्लिक करें और नया पासवर्ड सेट करें";
             }
-            return "मैं समझता हूं कि आप पूछ रहे हैं: \"" + userMessage + "\"\n\n" +
-                    "मैं इसमें मदद कर सकता हूं:\n• ऐप की सुविधाएं\n• पासवर्ड रीसेट\n• विज्ञापन जानकारी\n• चैट कार्यक्षमता";
+            // ✅ CHANGED: Short message only
+            return "कृपया केवल ऐप से संबंधित प्रश्न पूछें।";
         }
 
         // ✅ GERMAN Responses
@@ -410,10 +409,10 @@ public class activity_chatbot extends AppCompatActivity {
                         "2. Tippen Sie auf **'Passwort zurücksetzen'**\n" +
                         "3. Geben Sie Ihre registrierte E-Mail ein\n" +
                         "4. Prüfen Sie Ihren Posteingang auf den Reset-Link\n" +
-                        "5. Klicken Sie auf den Link und setzen Sie ein neues Passwort";
+                        "5. Klicken Sie auf den Link और setzen Sie ein neues Passwort";
             }
-            return "Ich verstehe, dass Sie fragen: \"" + userMessage + "\"\n\n" +
-                    "Ich kann helfen bei:\n• App-Funktionen\n• Passwort-Reset\n• Werbeinformationen\n• Chat-Funktionalität";
+            // ✅ CHANGED: Short message only
+            return "Bitte stellen Sie nur app-bezogene Fragen.";
         }
 
         // ✅ CHINESE Responses
@@ -427,8 +426,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. 检查收件箱中的重置链接\n" +
                         "5. 点击链接并设置新密码";
             }
-            return "我明白你在问：\"" + userMessage + "\"\n\n" +
-                    "我可以帮助：\n• 应用功能\n• 密码重置\n• 广告信息\n• 聊天功能";
+            // ✅ CHANGED: Short message only
+            return "请仅询问与应用程序相关的问题。";
         }
 
         // ✅ ARABIC Responses
@@ -442,8 +441,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. تحقق من البريد الوارد للحصول على رابط إعادة التعيين\n" +
                         "5. انقر على الرابط وقم بتعيين كلمة مرور جديدة";
             }
-            return "أفهم أنك تسأل عن: \"" + userMessage + "\"\n\n" +
-                    "يمكنني المساعدة في:\n• ميزات التطبيق\n• إعادة تعيين كلمة المرور\n• معلومات الإعلانات\n• وظيفة الدردشة";
+            // ✅ CHANGED: Short message only
+            return "يرجى طرح الأسئلة المتعلقة بالتطبيق فقط۔";
         }
 
         // ✅ BENGALI Responses
@@ -457,8 +456,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. রিসেট লিঙ্কের জন্য আপনার ইনবক্স চেক করুন\n" +
                         "5. লিঙ্কে ক্লিক করুন এবং নতুন পাসওয়ার্ড সেট করুন";
             }
-            return "আমি বুঝতে পেরেছি আপনি জিজ্ঞাসা করছেন: \"" + userMessage + "\"\n\n" +
-                    "আমি সাহায্য করতে পারি:\n• অ্যাপের বৈশিষ্ট্য\n• পাসওয়ার্ড রিসেট\n• বিজ্ঞাপনের তথ্য\n• চ্যাট কার্যকারিতা";
+            // ✅ CHANGED: Short message only
+            return "দয়া করে শুধুমাত্র অ্যাপ-সম্পর্কিত জিনিস জিজ্ঞাসা করুন।";
         }
 
         // ✅ URDU Responses
@@ -472,8 +471,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. ری سیٹ لنک کے لیے اپنا ان باکس چیک کریں\n" +
                         "5. لنک پر کلک کریں اور نیا پاس ورڈ سیٹ کریں";
             }
-            return "میں سمجھتا ہوں کہ آپ پوچھ رہے ہیں: \"" + userMessage + "\"\n\n" +
-                    "میں مدد کر سکتا ہوں:\n• ایپ کی خصوصیات\n• پاس ورڈ ری سیٹ\n• اشتہارات کی معلومات\n• چیٹ کی فعالیت";
+            // ✅ CHANGED: Short message only
+            return "براہ کرم صرف ایپ سے متعلق چیزوں کے بارے میں پوچھیں۔";
         }
 
         // ✅ SPANISH Responses
@@ -487,8 +486,8 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. Revise su bandeja de entrada para el enlace de restablecimiento\n" +
                         "5. Haga clic en el enlace y establezca una nueva contraseña";
             }
-            return "Entiendo que estás preguntando sobre: \"" + userMessage + "\"\n\n" +
-                    "Puedo ayudar con:\n• Características de la aplicación\n• Restablecimiento de contraseña\n• Información de anuncios\n• Funcionalidad de chat";
+            // ✅ CHANGED: Short message only
+            return "Por favor, pregunte solo cosas relevantes para la aplicación.";
         }
 
         // ✅ FRENCH Responses
@@ -502,13 +501,12 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. Vérifiez votre boîte de réception para le lien de réinitialisation\n" +
                         "5. Cliquez sur le lien et définissez un nouveau mot de passe";
             }
-            return "Je comprends que vous demandez: \"" + userMessage + "\"\n\n" +
-                    "Je peux aider avec:\n• Fonctionnalités de l'application\n• Réinitialisation du mot de passe\n• Informations sur les publicités\n• Fonctionnalité de chat";
+            // ✅ CHANGED: Short message only
+            return "Veuillez poser des questions pertinentes pour l'application uniquement.";
         }
 
         // Default English response
-        return "I understand you're asking about: \"" + userMessage + "\"\n\n" +
-                "I can help with:\n• App features\n• Password reset\n• Ads information\n• Chat functionality";
+        return "Please ask things relevant to the app only.";
     }
 
     private void addBotMessage(String message) {
@@ -520,41 +518,43 @@ public class activity_chatbot extends AppCompatActivity {
         adapter.notifyItemInserted(messageList.size() - 1);
         recyclerView.scrollToPosition(messageList.size() - 1);
 
-        // Update token info
-        updateTokenizationInfo(message);
+        // ✅ NO TOKEN COUNT UPDATE - Empty method
+        // updateTokenizationInfo(message); // Commented out
     }
 
-    private void showTokenizationDemo() {
-        String exampleQuery = "How do I reset my app password?";
-        String[] tokens = exampleQuery.split("\\s+");
-        int tokenCount = tokens.length;
+//    private void showTokenizationDemo() {
+//        String exampleQuery = "How do I reset my app password?";
+//        String[] tokens = exampleQuery.split("\\s+");
+//        int tokenCount = tokens.length;
+//
+//        StringBuilder tokenList = new StringBuilder();
+//        for (int i = 0; i < tokens.length; i++) {
+//            tokenList.append(i + 1).append(". ").append(tokens[i]);
+//            if (i < tokens.length - 1) tokenList.append("\n");
+//        }
+//
+//        ChatMessage demoMsg = new ChatMessage();
+//        demoMsg.setMessage("🔍 **Tokenization Demo**\n\n" +
+//                "**Query:** \"" + exampleQuery + "\"\n\n" +
+//                "**Tokens:** " + tokenCount + "\n" + tokenList.toString() + "\n\n" +
+//                "**Language:** " + languageNames.get(currentLanguage));
+//        demoMsg.setSender("system");
+//        demoMsg.setTimestamp(System.currentTimeMillis());
+//
+//        messageList.add(demoMsg);
+//        adapter.notifyItemInserted(messageList.size() - 1);
+//        recyclerView.scrollToPosition(messageList.size() - 1);
+//
+//        // ✅ NO TOKEN COUNT - Just keep default text
+//        tvTokenInfo.setText("NLP: Ready");
+//
+//        Toast.makeText(this, "Tokenization demo shown", Toast.LENGTH_SHORT).show();
+//    }
 
-        StringBuilder tokenList = new StringBuilder();
-        for (int i = 0; i < tokens.length; i++) {
-            tokenList.append(i + 1).append(". ").append(tokens[i]);
-            if (i < tokens.length - 1) tokenList.append("\n");
-        }
-
-        ChatMessage demoMsg = new ChatMessage();
-        demoMsg.setMessage("🔍 **Tokenization Demo**\n\n" +
-                "**Query:** \"" + exampleQuery + "\"\n\n" +
-                "**Tokens:** " + tokenCount + "\n" + tokenList.toString() + "\n\n" +
-                "**Language:** " + languageNames.get(currentLanguage));
-        demoMsg.setSender("system");
-        demoMsg.setTimestamp(System.currentTimeMillis());
-
-        messageList.add(demoMsg);
-        adapter.notifyItemInserted(messageList.size() - 1);
-        recyclerView.scrollToPosition(messageList.size() - 1);
-
-        tvTokenInfo.setText("Tokens: " + tokenCount + " | " + currentLanguage.toUpperCase());
-        Toast.makeText(this, "Tokenization demo shown", Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateTokenizationInfo(String message) {
-        int wordCount = message.split("\\s+").length;
-        tvTokenInfo.setText("Tokens: " + wordCount + " | " + currentLanguage.toUpperCase());
-    }
+    // ✅ REMOVED TOKEN COUNT UPDATE METHOD
+    // private void updateTokenizationInfo(String message) {
+    //     // Empty method - No token count update
+    // }
 
     private String extractAIResponse(JSONObject jsonResponse) {
         try {
