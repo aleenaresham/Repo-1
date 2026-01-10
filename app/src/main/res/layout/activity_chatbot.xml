@@ -22,7 +22,7 @@
             android:layout_height="48dp"
             android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="#7B1FA2"
+            android:backgroundTint="#7B1FA2"
             android:layout_marginEnd="12dp" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_chatbot"
-            android:tint="#7B1FA2" />
+            android:backgroundTint="#7B1FA2" />
     </LinearLayout>
 
     <!-- Status Bar -->
@@ -56,7 +56,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/ic_status_active"
-            android:tint="#7B1FA2"
+            android:backgroundTint="#7B1FA2"
             android:layout_marginEnd="8dp" />
 
         <TextView
@@ -135,7 +135,7 @@
                 android:src="@drawable/ic_send"
                 android:background="?attr/selectableItemBackground"
                 android:layout_marginStart="8dp"
-                android:tint="#7B1FA2" />
+                android:backgroundTint="#7B1FA2" />
         </LinearLayout>
 
         <!-- Tokenization Demo Button -->

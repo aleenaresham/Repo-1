@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -137,6 +136,10 @@ public class activity_chatbot extends AppCompatActivity {
         welcomeMessages.put("hi", "नमस्ते! मैं आपकी AI सहायक हूं। मैं आपकी ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों और रीयल-टाइम चैट में मदद कर सकती हूं। आप क्या जानना चाहते हैं?");
         welcomeMessages.put("es", "¡Hola! Soy tu asistente de IA. Puedo ayudarte con funciones de la aplicación, restablecimiento de contraseñas, anuncios y chat en tiempo real. ¿Qué te gustaría saber?");
         welcomeMessages.put("fr", "Bonjour ! Je suis votre assistant IA. Je peux vous aider avec les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités et le chat en temps réel. Que voudriez-vous savoir ?");
+        welcomeMessages.put("de", "Hallo! Ich bin Ihr KI-Assistent. Ich kann Ihnen bei App-Funktionen, Passwort-Reset, Werbung und Echtzeit-Chat helfen. Was möchten Sie wissen?");
+        welcomeMessages.put("zh", "你好！我是你的AI助手。我可以帮助你处理应用功能、密码重置、广告和实时聊天。你想知道什么？");
+        welcomeMessages.put("ar", "مرحبًا! أنا مساعدك الذكي. يمكنني مساعدتك في ميزات التطبيق، إعادة تعيين كلمة المرور، الإعلانات والدردشة الفورية. ماذا تريد أن تعرف؟");
+        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান؟");
         welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
 
         ChatMessage welcomeMsg = new ChatMessage();
@@ -201,6 +204,10 @@ public class activity_chatbot extends AppCompatActivity {
         welcomeMessages.put("hi", "नमस्ते! मैं आपकी AI सहायक हूं। मैं आपकी ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों और रीयल-टाइम चैट में मदद कर सकती हूं। आप क्या जानना चाहते हैं?");
         welcomeMessages.put("es", "¡Hola! Soy tu asistente de IA. Puedo ayudarte con funciones de la aplicación, restablecimiento de contraseñas, anuncios y chat en tiempo real. ¿Qué te gustaría saber?");
         welcomeMessages.put("fr", "Bonjour ! Je suis votre assistant IA. Je peux vous aider avec les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités et le chat en temps réel. Que voudriez-vous savoir ?");
+        welcomeMessages.put("de", "Hallo! Ich bin Ihr KI-Assistent. Ich kann Ihnen bei App-Funktionen, Passwort-Reset, Werbung und Echtzeit-Chat helfen. Was möchten Sie wissen?");
+        welcomeMessages.put("zh", "你好！我是你的AI助手。我可以帮助你处理应用功能、密码重置、广告和实时聊天。你想知道什么？");
+        welcomeMessages.put("ar", "مرحبًا! أنا مساعدك الذكي. يمكنني مساعدتك في ميزات التطبيق، إعادة تعيين كلمة المرور، الإعلانات والدردشة الفورية. ماذا تريد أن تعرف؟");
+        welcomeMessages.put("bn", "হ্যালো! আমি আপনার AI সহকারী। আমি আপনাকে অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন এবং রিয়েল-টাইম চ্যাটে সাহায্য করতে পারি। আপনি কি জানতে চান؟");
         welcomeMessages.put("ur", "ہیلو! میں آپ کی AI اسسٹنٹ ہوں۔ میں آپ کی ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات اور ریئل ٹائم چیٹ میں مدد کر سکتی ہوں۔ آپ کیا جاننا چاہتے ہیں؟");
 
         if (!messageList.isEmpty()) {
@@ -321,6 +328,10 @@ public class activity_chatbot extends AppCompatActivity {
         prompts.put("hi", "ऐप की सुविधाओं, पासवर्ड रीसेट, विज्ञापनों या चैट के बारे में हिंदी में उत्तर दें: ");
         prompts.put("es", "Responde en español sobre funciones de la aplicación, restablecimiento de contraseñas, anuncios o chat: ");
         prompts.put("fr", "Répondez en français sur les fonctionnalités de l'application, la réinitialisation du mot de passe, les publicités ou le chat: ");
+        prompts.put("de", "Antworten Sie auf Deutsch zu App-Funktionen, Passwort-Reset, Werbung oder Chat: ");
+        prompts.put("zh", "用中文回答有关应用程序功能、密码重置、广告或聊天的问题: ");
+        prompts.put("ar", "الرد باللغة العربية حول ميزات التطبيق، إعادة تعيين كلمة المرور، الإعلانات أو الدردشة: ");
+        prompts.put("bn", "অ্যাপের বৈশিষ্ট্য, পাসওয়ার্ড রিসেট, বিজ্ঞাপন বা চ্যাট সম্পর্কে বাংলায় উত্তর দিন: ");
         prompts.put("ur", "ایپ کی خصوصیات، پاس ورڈ ری سیٹ، اشتہارات یا چیٹ کے بارے میں اردو میں جواب دیں: ");
 
         return prompts.getOrDefault(langCode, prompts.get("en"));
@@ -334,7 +345,7 @@ public class activity_chatbot extends AppCompatActivity {
     private String getLocalResponse(String userMessage, String langCode) {
         String lowerMsg = userMessage.toLowerCase();
 
-        // English responses
+        // ✅ ENGLISH Responses
         if (langCode.equals("en")) {
             if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
                 return "🔐 **Password Reset Assistance**\n\n" +
@@ -345,10 +356,37 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. Check inbox for reset link\n" +
                         "5. Click link and set new password";
             }
-            // ... more English responses
+            if (lowerMsg.contains("ad") || lowerMsg.contains("ads") || lowerMsg.contains("advertising")) {
+                return "📢 **AdMob Advertising**\n\n" +
+                        "This app uses Google AdMob for ads:\n\n" +
+                        "• **Banner Ads**: Bottom of screen\n" +
+                        "• **Interstitial Ads**: Full-screen on button click\n" +
+                        "• **Test Mode**: Currently active\n" +
+                        "• **Ad IDs**: Test IDs for development";
+            }
+            if (lowerMsg.contains("feature") || lowerMsg.contains("function")) {
+                return "🌟 **App Features**\n\n" +
+                        "Available features in this app:\n\n" +
+                        "• **AI Chatbot**: Multilingual assistant\n" +
+                        "• **Advertising**: AdMob integration\n" +
+                        "• **Password Management**: Reset functionality\n" +
+                        "• **Real-time Chat**: Instant messaging\n" +
+                        "• **Tokenization**: Text analysis demo";
+            }
+            if (lowerMsg.contains("chat") || lowerMsg.contains("message")) {
+                return "💬 **Chat Features**\n\n" +
+                        "You're currently using the chat feature:\n\n" +
+                        "• **Multilingual**: 9 languages supported\n" +
+                        "• **AI-powered**: Gemini API integration\n" +
+                        "• **Real-time**: Instant responses\n" +
+                        "• **Local Fallback**: Works offline too";
+            }
+            return "I understand you're asking about: \"" + userMessage + "\"\n\n" +
+                    "I can help with:\n• App features\n• Password reset\n• Ads information\n• Chat functionality\n\n" +
+                    "Try asking about:\n• How to reset password\n• About ads in the app\n• App features\n• Chat capabilities";
         }
 
-        // Hindi responses
+        // ✅ HINDI Responses
         else if (langCode.equals("hi")) {
             if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
                 return "🔐 **पासवर्ड रीसेट सहायता**\n\n" +
@@ -359,9 +397,71 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. रीसेट लिंक के लिए अपना इनबॉक्स चेक करें\n" +
                         "5. लिंक पर क्लिक करें और नया पासवर्ड सेट करें";
             }
+            return "मैं समझता हूं कि आप पूछ रहे हैं: \"" + userMessage + "\"\n\n" +
+                    "मैं इसमें मदद कर सकता हूं:\n• ऐप की सुविधाएं\n• पासवर्ड रीसेट\n• विज्ञापन जानकारी\n• चैट कार्यक्षमता";
         }
 
-        // Urdu responses
+        // ✅ GERMAN Responses
+        else if (langCode.equals("de")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **Passwort-Reset-Hilfe**\n\n" +
+                        "So setzen Sie Ihr Passwort zurück:\n\n" +
+                        "1. Gehen Sie zu **Einstellungen > Konto**\n" +
+                        "2. Tippen Sie auf **'Passwort zurücksetzen'**\n" +
+                        "3. Geben Sie Ihre registrierte E-Mail ein\n" +
+                        "4. Prüfen Sie Ihren Posteingang auf den Reset-Link\n" +
+                        "5. Klicken Sie auf den Link und setzen Sie ein neues Passwort";
+            }
+            return "Ich verstehe, dass Sie fragen: \"" + userMessage + "\"\n\n" +
+                    "Ich kann helfen bei:\n• App-Funktionen\n• Passwort-Reset\n• Werbeinformationen\n• Chat-Funktionalität";
+        }
+
+        // ✅ CHINESE Responses
+        else if (langCode.equals("zh")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **密码重置帮助**\n\n" +
+                        "要重置密码：\n\n" +
+                        "1. 转到**设置 > 账户**\n" +
+                        "2. 点击**'重置密码'**\n" +
+                        "3. 输入您注册的邮箱\n" +
+                        "4. 检查收件箱中的重置链接\n" +
+                        "5. 点击链接并设置新密码";
+            }
+            return "我明白你在问：\"" + userMessage + "\"\n\n" +
+                    "我可以帮助：\n• 应用功能\n• 密码重置\n• 广告信息\n• 聊天功能";
+        }
+
+        // ✅ ARABIC Responses
+        else if (langCode.equals("ar")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **مساعدة إعادة تعيين كلمة المرور**\n\n" +
+                        "لإعادة تعيين كلمة المرور:\n\n" +
+                        "1. انتقل إلى **الإعدادات > الحساب**\n" +
+                        "2. اضغط على **'إعادة تعيين كلمة المرور'**\n" +
+                        "3. أدخل بريدك الإلكتروني المسجل\n" +
+                        "4. تحقق من البريد الوارد للحصول على رابط إعادة التعيين\n" +
+                        "5. انقر على الرابط وقم بتعيين كلمة مرور جديدة";
+            }
+            return "أفهم أنك تسأل عن: \"" + userMessage + "\"\n\n" +
+                    "يمكنني المساعدة في:\n• ميزات التطبيق\n• إعادة تعيين كلمة المرور\n• معلومات الإعلانات\n• وظيفة الدردشة";
+        }
+
+        // ✅ BENGALI Responses
+        else if (langCode.equals("bn")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **পাসওয়ার্ড রিসেট সাহায্য**\n\n" +
+                        "আপনার পাসওয়ার্ড রিসেট করতে:\n\n" +
+                        "1. **সেটিংস > অ্যাকাউন্ট**-এ যান\n" +
+                        "2. **'পাসওয়ার্ড রিসেট'** ট্যাপ করুন\n" +
+                        "3. আপনার নিবন্ধিত ইমেল লিখুন\n" +
+                        "4. রিসেট লিঙ্কের জন্য আপনার ইনবক্স চেক করুন\n" +
+                        "5. লিঙ্কে ক্লিক করুন এবং নতুন পাসওয়ার্ড সেট করুন";
+            }
+            return "আমি বুঝতে পেরেছি আপনি জিজ্ঞাসা করছেন: \"" + userMessage + "\"\n\n" +
+                    "আমি সাহায্য করতে পারি:\n• অ্যাপের বৈশিষ্ট্য\n• পাসওয়ার্ড রিসেট\n• বিজ্ঞাপনের তথ্য\n• চ্যাট কার্যকারিতা";
+        }
+
+        // ✅ URDU Responses
         else if (langCode.equals("ur")) {
             if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
                 return "🔐 **پاس ورڈ ری سیٹ مدد**\n\n" +
@@ -372,6 +472,38 @@ public class activity_chatbot extends AppCompatActivity {
                         "4. ری سیٹ لنک کے لیے اپنا ان باکس چیک کریں\n" +
                         "5. لنک پر کلک کریں اور نیا پاس ورڈ سیٹ کریں";
             }
+            return "میں سمجھتا ہوں کہ آپ پوچھ رہے ہیں: \"" + userMessage + "\"\n\n" +
+                    "میں مدد کر سکتا ہوں:\n• ایپ کی خصوصیات\n• پاس ورڈ ری سیٹ\n• اشتہارات کی معلومات\n• چیٹ کی فعالیت";
+        }
+
+        // ✅ SPANISH Responses
+        else if (langCode.equals("es")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **Asistencia para restablecer contraseña**\n\n" +
+                        "Para restablecer su contraseña:\n\n" +
+                        "1. Vaya a **Configuración > Cuenta**\n" +
+                        "2. Toque **'Restablecer contraseña'**\n" +
+                        "3. Ingrese su correo electrónico registrado\n" +
+                        "4. Revise su bandeja de entrada para el enlace de restablecimiento\n" +
+                        "5. Haga clic en el enlace y establezca una nueva contraseña";
+            }
+            return "Entiendo que estás preguntando sobre: \"" + userMessage + "\"\n\n" +
+                    "Puedo ayudar con:\n• Características de la aplicación\n• Restablecimiento de contraseña\n• Información de anuncios\n• Funcionalidad de chat";
+        }
+
+        // ✅ FRENCH Responses
+        else if (langCode.equals("fr")) {
+            if (lowerMsg.contains("password") || lowerMsg.contains("reset")) {
+                return "🔐 **Aide à la réinitialisation du mot de passe**\n\n" +
+                        "Pour réinitialiser votre mot de passe:\n\n" +
+                        "1. Allez dans **Paramètres > Compte**\n" +
+                        "2. Appuyez sur **'Réinitialiser le mot de passe'**\n" +
+                        "3. Entrez votre email enregistré\n" +
+                        "4. Vérifiez votre boîte de réception para le lien de réinitialisation\n" +
+                        "5. Cliquez sur le lien et définissez un nouveau mot de passe";
+            }
+            return "Je comprends que vous demandez: \"" + userMessage + "\"\n\n" +
+                    "Je peux aider avec:\n• Fonctionnalités de l'application\n• Réinitialisation du mot de passe\n• Informations sur les publicités\n• Fonctionnalité de chat";
         }
 
         // Default English response
@@ -445,6 +577,6 @@ public class activity_chatbot extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return "I received your message. I can help with app features, password reset, ads, or chat functionality.";
+        return getLocalResponse("I need help", currentLanguage);
     }
 }

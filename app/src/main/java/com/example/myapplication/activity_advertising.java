@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.AdRequest;
@@ -28,7 +30,7 @@ public class activity_advertising extends AppCompatActivity {
     private int adCount = 0;
     private boolean isBannerVisible = true;
 
-    // ✅ POINT 2: Interstitial Ad Variable
+    // ✅ Interstitial Ad Variable
     private InterstitialAd mInterstitialAd;
 
     @Override
@@ -52,13 +54,13 @@ public class activity_advertising extends AppCompatActivity {
         TextView tvTitle = findViewById(R.id.tvTitle);
         tvTitle.setText("Advertising (AdMob)");
 
-        // ✅ POINT 1: Initialize AdMob
+        // ✅ Initialize AdMob
         initializeAdMob();
 
         // Setup button listeners
         setupButtonListeners();
 
-        // ✅ POINT 3: Load first interstitial ad
+        // ✅ Load first interstitial ad
         loadInterstitialAd();
     }
 
@@ -68,17 +70,17 @@ public class activity_advertising extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
                 tvAdStatus.setText("Status: AdMob Initialized • Test Mode Active");
 
-                // ✅ POINT 4: Banner Ad Load
+                // ✅ Banner Ad Load
                 loadBannerAd();
 
-                // ✅ POINT 5: Setup Banner Ad Listener
+                // ✅ Setup Banner Ad Listener
                 setupBannerAdListener();
             }
         });
     }
 
     private void loadBannerAd() {
-        // ✅ POINT 6: Test Banner Ad
+        // ✅ Test Banner Ad
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
     }
@@ -101,7 +103,7 @@ public class activity_advertising extends AppCompatActivity {
     }
 
     private void loadInterstitialAd() {
-        // ✅ POINT 7: Load Interstitial Ad
+        // ✅ Load Interstitial Ad
         AdRequest adRequest = new AdRequest.Builder().build();
 
         InterstitialAd.load(this,
@@ -115,7 +117,7 @@ public class activity_advertising extends AppCompatActivity {
                         btnInterstitial.setText("Show Interstitial Ad");
                         btnInterstitial.setEnabled(true);
 
-                        // ✅ POINT 8: Setup Interstitial Callback
+                        // ✅ Setup Interstitial Callback
                         setupInterstitialCallback();
                     }
 
@@ -132,7 +134,7 @@ public class activity_advertising extends AppCompatActivity {
         mInterstitialAd.setFullScreenContentCallback(new com.google.android.gms.ads.FullScreenContentCallback() {
             @Override
             public void onAdDismissedFullScreenContent() {
-                // ✅ POINT 9: Ad closed, load next ad
+                // ✅ Ad closed, load next ad
                 tvAdStatus.setText("Status: Interstitial closed • Loading next");
                 mInterstitialAd = null;
                 loadInterstitialAd();
@@ -156,13 +158,13 @@ public class activity_advertising extends AppCompatActivity {
     }
 
     private void setupButtonListeners() {
-        // ✅ POINT 10: Toggle Banner Ad
+        // ✅ Toggle Banner Ad
         btnToggleBanner.setOnClickListener(v -> toggleBannerAd());
 
-        // ✅ POINT 11: Show Interstitial Ad
+        // ✅ Show Interstitial Ad
         btnInterstitial.setOnClickListener(v -> showInterstitialAd());
 
-        // ✅ POINT 12: Test Ad Information
+        // ✅ Test Ad Information (Updated with Scrollable Dialog)
         btnTestAdInfo.setOnClickListener(v -> showTestAdInfo());
     }
 
@@ -185,7 +187,7 @@ public class activity_advertising extends AppCompatActivity {
 
     private void showInterstitialAd() {
         if (mInterstitialAd != null) {
-            // ✅ POINT 13: Display Real Interstitial Ad
+            // ✅ Display Real Interstitial Ad
             mInterstitialAd.show(activity_advertising.this);
             btnInterstitial.setEnabled(false);
             btnInterstitial.setText("Showing ad...");
@@ -200,19 +202,84 @@ public class activity_advertising extends AppCompatActivity {
         }
     }
 
+    // ✅ UPDATED: Scrollable Dialog for Test Ad Info
     private void showTestAdInfo() {
-        Toast.makeText(this,
-                "📱 AdMob Test Configuration:\n\n" +
-                        "✅ Banner Ad (Test):\n" +
-                        "ca-app-pub-3940256099942544/6300978111\n\n" +
-                        "✅ Interstitial Ad (Test):\n" +
-                        "ca-app-pub-3940256099942544/1033173712\n\n" +
-                        "✅ Note:\n" +
-                        "• Test ads are acceptable for development\n" +
-                        "• Real ads need own Ad Unit IDs\n" +
-                        "• Banner at bottom\n" +
-                        "• Interstitial on button click",
-                Toast.LENGTH_LONG).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("📱 AdMob Test Configuration");
+
+        // Create the text view with detailed information
+        TextView message = new TextView(this);
+        String infoText =
+                "✅ BANNER AD (TEST MODE)\n" +
+                        "--------------------------------\n" +
+                        "Ad Unit ID: ca-app-pub-3940256099942544/6300978111\n" +
+                        "Ad Size: 320x50 pixels (Banner)\n" +
+                        "Refresh Rate: 60 seconds\n" +
+                        "Location: Bottom of screen\n\n" +
+
+                        "✅ INTERSTITIAL AD (TEST MODE)\n" +
+                        "--------------------------------\n" +
+                        "Ad Unit ID: ca-app-pub-3940256099942544/1033173712\n" +
+                        "Ad Type: Full-screen interstitial\n" +
+                        "Trigger: Manual (Button click)\n" +
+                        "Loading: Background pre-load\n\n" +
+
+                        "✅ IMPORTANT NOTES\n" +
+                        "--------------------------------\n" +
+                        "• These are TEST Ad Unit IDs for development only\n" +
+                        "• Do NOT use these IDs in production apps\n" +
+                        "• Create your own Ad Unit IDs in Google AdMob Console\n" +
+                        "• Test ads are acceptable during development\n" +
+                        "• Real ads require proper AdMob account setup\n\n" +
+
+                        "✅ CURRENT AD STATUS\n" +
+                        "--------------------------------\n" +
+                        "• Banner Ad: " + (isBannerVisible ? "Visible" : "Hidden") + "\n" +
+                        "• Interstitial Ad: " + (mInterstitialAd != null ? "Ready to Show" : "Loading...") + "\n" +
+                        "• Total Ads Shown: " + adCount + "\n" +
+                        "• Test Mode: ACTIVE\n\n" +
+
+                        "✅ NEXT STEPS FOR PRODUCTION\n" +
+                        "--------------------------------\n" +
+                        "1. Create AdMob account at admob.google.com\n" +
+                        "2. Add your app in AdMob Console\n" +
+                        "3. Create real Ad Unit IDs\n" +
+                        "4. Replace test IDs with your real IDs\n" +
+                        "5. Submit app for review\n" +
+                        "6. Start monetizing!";
+
+        message.setText(infoText);
+        message.setTextSize(14);
+        message.setTextColor(getResources().getColor(android.R.color.black));
+        message.setPadding(40, 30, 40, 30);
+
+        // Make text scrollable
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.addView(message);
+
+        builder.setView(scrollView);
+
+        // Add Copy IDs button
+        builder.setNeutralButton("Copy IDs", (dialog, which) -> {
+            String adIds = "Banner Test ID: ca-app-pub-3940256099942544/6300978111\n" +
+                    "Interstitial Test ID: ca-app-pub-3940256099942544/1033173712";
+
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText(
+                    "AdMob Test IDs",
+                    adIds
+            );
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, "Test IDs copied to clipboard", Toast.LENGTH_SHORT).show();
+        });
+
+        // Add OK button
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+        // Show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
