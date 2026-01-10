@@ -23,7 +23,7 @@ public class Signuppage extends AppCompatActivity {
     EditText etName, etEmail, etPassword, etConfirmPassword;
     Button btnSignUp, btnNext;
     LinearLayout btnGoogle, btnMicrosoft;
-    TextView tvLogin;
+    TextView tvLogin, tvNameValidation, tvPasswordStrength; // ✅ Added tvNameValidation
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -48,6 +48,66 @@ public class Signuppage extends AppCompatActivity {
         btnMicrosoft = findViewById(R.id.btnMicrosoft);
 
         tvLogin = findViewById(R.id.tvLogin);
+        tvNameValidation = findViewById(R.id.tvNameValidation); // ✅ Initialize
+        tvPasswordStrength = findViewById(R.id.tvPasswordStrength);
+
+        // ✅ REAL-TIME: Name Validation
+        etName.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String name = s.toString();
+                if (name.length() > 0) {
+                    String validationMsg = TextUtils.getNameValidationMessage(name);
+                    tvNameValidation.setText(validationMsg);
+
+                    // Color coding for name
+                    if (validationMsg.startsWith("✅")) {
+                        tvNameValidation.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                    } else if (validationMsg.startsWith("⚠️")) {
+                        tvNameValidation.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+                    } else {
+                        tvNameValidation.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                    }
+                } else {
+                    tvNameValidation.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        // ✅ REAL-TIME: Password Strength Check
+        etPassword.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String password = s.toString();
+                if (password.length() > 0) {
+                    String strengthMessage = TextUtils.getPasswordStrengthMessage(password);
+                    tvPasswordStrength.setText(strengthMessage);
+
+                    // Color coding for password
+                    if (strengthMessage.startsWith("✅")) {
+                        tvPasswordStrength.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                    } else if (strengthMessage.startsWith("⚠️")) {
+                        tvPasswordStrength.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+                    } else {
+                        tvPasswordStrength.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                    }
+                } else {
+                    tvPasswordStrength.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
 
         btnSignUp.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
@@ -55,48 +115,59 @@ public class Signuppage extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            // ✅ Using TextUtils for validation
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) ||
+                    TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
                 Toast.makeText(Signuppage.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            boolean isValidName = true;
-            for (int i = 0; i < name.length(); i++) {
-                char c = name.charAt(i);
-                if (!Character.isLetter(c) && c != ' ') {
-                    isValidName = false;
-                    break;
-                }
-            }
-
-            if (!isValidName) {
-                Toast.makeText(Signuppage.this, "Name should contain only letters (A-Z) and spaces", Toast.LENGTH_SHORT).show();
+            // ✅ Name validation
+            if (!TextUtils.isValidName(name)) {
+                String nameMessage = TextUtils.getNameValidationMessage(name);
+                Toast.makeText(Signuppage.this,
+                        "Invalid name: " + nameMessage.replace("❌", "").replace("✅", ""),
+                        Toast.LENGTH_LONG).show();
                 return;
             }
 
+            // ✅ Email validation
+            if (!TextUtils.isValidEmail(email)) {
+                Toast.makeText(Signuppage.this,
+                        "Please enter a valid email address",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // ✅ Password match validation
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(Signuppage.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (password.length() < 6) {
-                Toast.makeText(Signuppage.this, "Password should be at least 6 characters", Toast.LENGTH_SHORT).show();
+            // ✅ Password strength validation
+            if (!TextUtils.isStrongPassword(password)) {
+                String message = TextUtils.getPasswordStrengthMessage(password);
+                Toast.makeText(Signuppage.this,
+                        "Weak password! " + message.replace("❌", "").replace("✅", "").replace("⚠️", ""),
+                        Toast.LENGTH_LONG).show();
                 return;
             }
 
+            // All validations passed
             createUserWithEmailPassword(name, email, password);
         });
 
         btnNext.setOnClickListener(v -> {
             Intent intent = new Intent(Signuppage.this, Loginpage.class);
             startActivity(intent);
-            finish(); // add finish
+            finish();
         });
 
         tvLogin.setOnClickListener(v -> {
             Intent intent = new Intent(Signuppage.this, Loginpage.class);
             startActivity(intent);
-            finish(); // add finish
+            finish();
         });
 
         btnGoogle.setOnClickListener(v -> Toast.makeText(Signuppage.this, "Google Sign Up clicked", Toast.LENGTH_SHORT).show());
@@ -116,8 +187,14 @@ public class Signuppage extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(Signuppage.this, "Registration failed: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        String errorMessage = "Registration failed";
+                        if (task.getException() != null) {
+                            errorMessage = task.getException().getMessage();
+                            if (errorMessage.contains("email address is already")) {
+                                errorMessage = "This email is already registered. Please login.";
+                            }
+                        }
+                        Toast.makeText(Signuppage.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -127,6 +204,7 @@ public class Signuppage extends AppCompatActivity {
         user.put("name", name);
         user.put("email", email);
         user.put("createdAt", System.currentTimeMillis());
+        user.put("passwordStrength", TextUtils.getPasswordStrengthMessage(etPassword.getText().toString()));
 
         db.collection("users")
                 .document(userId)

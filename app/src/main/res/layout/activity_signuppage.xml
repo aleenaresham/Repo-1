@@ -43,8 +43,17 @@
             android:padding="12dp"
             android:background="@drawable/sign"
             android:elevation="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             android:clipToOutline="true" />
+
+        <!-- ✅ ADD: Name Validation TextView -->
+        <TextView
+            android:id="@+id/tvNameValidation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginBottom="12dp"
+            android:paddingHorizontal="12dp" />
 
         <EditText
             android:id="@+id/etEmail"
@@ -62,13 +71,22 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/sign"
             android:clipToOutline="true"
             android:elevation="4dp"
             android:hint="Enter Password"
             android:inputType="textPassword"
             android:padding="12dp" />
+
+        <!-- ✅ ADD THIS TEXTVIEW AFTER etPassword -->
+        <TextView
+            android:id="@+id/tvPasswordStrength"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginBottom="12dp"
+            android:paddingHorizontal="12dp" />
 
         <EditText
             android:id="@+id/etConfirmPassword"
