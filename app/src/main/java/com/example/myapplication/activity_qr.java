@@ -22,7 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
 public class activity_qr extends AppCompatActivity {
 
     private TextView tvResult;
-    private Button btnScan, btnBack, btnLogout, btnGotoDashboard;
+    private Button btnScan, btnBack, btnLogout, btnGotoDashboard, btnObjectDetection; // ✅ New button added
     private FirebaseAuth mAuth;
     private SharedPreferences sharedPreferences;
 
@@ -37,12 +37,25 @@ public class activity_qr extends AppCompatActivity {
         // Initialize SharedPreferences for session
         sharedPreferences = getSharedPreferences("MyAppSession", MODE_PRIVATE);
 
-        // Initialize views
+        // ✅ Initialize ALL views (including new button)
         tvResult = findViewById(R.id.tv_result);
         btnScan = findViewById(R.id.btn_scan);
         btnBack = findViewById(R.id.btn_back);
         btnLogout = findViewById(R.id.btn_logout);
-        btnGotoDashboard = findViewById(R.id.btn_goto_dashboard); // Initialize dashboard button
+        btnGotoDashboard = findViewById(R.id.btn_goto_dashboard);
+        btnObjectDetection = findViewById(R.id.btnObjectDetection); // ✅ Initialize object detection button
+
+        // ✅ OBJECT DETECTION BUTTON CLICK LISTENER
+        btnObjectDetection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to Object Detection Activity
+                Intent intent = new Intent(activity_qr.this,activity_objectdetection.class);
+                startActivity(intent);
+                // Note: We don't call finish() so user can come back
+                Toast.makeText(activity_qr.this, "Opening Object Detection...", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Dashboard button click
         btnGotoDashboard.setOnClickListener(new View.OnClickListener() {

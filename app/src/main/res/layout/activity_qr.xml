@@ -30,6 +30,21 @@
             android:paddingBottom="8dp"
             android:layout_marginEnd="8dp" />
 
+        <!-- ✅ NEW: Object Detection Button -->
+        <Button
+            android:id="@+id/btnObjectDetection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📸 Detect"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="#7B1FA2"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_marginEnd="8dp" />
+
         <!-- Logout Button -->
         <Button
             android:id="@+id/btn_logout"
