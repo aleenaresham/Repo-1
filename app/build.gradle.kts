@@ -66,6 +66,13 @@ dependencies {
     implementation ("com.google.android.gms:play-services-ads:22.2.0")
 
 
+// Firebase BOM
+    // Firebase BOM
+    implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
+
+
+// FCM dependency
+    implementation("com.google.firebase:firebase-messaging") // ✅ Correct
 
 
 }
